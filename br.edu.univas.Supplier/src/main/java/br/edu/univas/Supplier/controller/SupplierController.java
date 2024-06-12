@@ -1,5 +1,7 @@
 package br.edu.univas.Supplier.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,20 +25,26 @@ public class SupplierController {
 	@Autowired
 	private SupplierService service;
 	
-	@GetMapping("/{cnpj}")
-	public SupplierEntity findById(@PathVariable Integer cnpj) {
-		return service.findById(cnpj);
+	@GetMapping("")
+	@ResponseStatus(HttpStatus.OK)
+	public List<SupplierDTO> getAllSuppliers(){
+		return service.findAll();
+	}
+	
+	@GetMapping("/{id}")
+	public SupplierEntity findById(@PathVariable int id) {
+		return service.findById(id);
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updateSupplier(@RequestBody SupplierDTO dto, @PathVariable  Integer cnpj) {
-		service.updateSupplier(dto, cnpj);
+	public void updateSupplier(@RequestBody SupplierDTO dto, @PathVariable  Integer id) {
+		service.updateSupplier(dto, id);
 	}
 	
-	@DeleteMapping("/{cnpj}")
+	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteSupplier(@PathVariable Integer cnpj) {
-		service.deleteSupplier(cnpj);
+	public void deleteSupplier(@PathVariable Integer id) {
+		service.deleteSupplier(id);
 	}
 
 	@PostMapping("")

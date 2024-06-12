@@ -10,12 +10,13 @@ import br.edu.univas.Supplier.entites.SupplierEntity;
 public class SupplierEntityConverter {
 	
 	public static SupplierDTO toDTO(SupplierEntity suppliers) {
-		return new SupplierDTO();
+		return new SupplierDTO(suppliers.getId(),suppliers.getCnpj(), suppliers.getName(), suppliers.getLastBuyDate(), suppliers.getQualityRate(), suppliers.getProbabilityNewDeals(), false);
 	}
 	
 	public SupplierEntity toEntity(SupplierDTO sup) {
 		System.out.println("toEntity: " + sup);
-		return new SupplierEntity();
+		return new SupplierEntity(sup.getId(), sup.getCnpj(), sup.getName(), sup.getLastBuyDate(), sup.getQualityRate(), 
+				sup.getProbabilityNewDeals(), false);
 	}
 
 }

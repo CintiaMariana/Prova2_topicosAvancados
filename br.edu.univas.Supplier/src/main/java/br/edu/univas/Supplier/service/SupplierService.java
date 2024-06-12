@@ -2,6 +2,7 @@ package br.edu.univas.Supplier.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,44 +20,55 @@ public class SupplierService {
 	
 	private SupplierRepository repo;
 	
-	private SupplierEntityConverter converter = new SupplierEntityConverter();
+	@Autowired
+	private SupplierEntityConverter converter;
 	
 	@Autowired
 	public SupplierService(SupplierRepository repo) {
 		this.repo = repo;
 	}
 	
-	public List<SupplierEntity> findAll(){
-		return repo.findAll();
+	public List<SupplierDTO> findAll(){
+		return repo.findAll().stream().map(SupplierEntityConverter::toDTO).collect(Collectors.toList());
 	}
 	
-	public SupplierEntity findById(Integer cnpj) {
-		Optional<SupplierEntity> obj = repo.findById(cnpj);
-		return obj.orElseThrow(() -> new ObjectNotFoundException("No Supplier found with CNPJ: " + cnpj));
-		
+	
+	public SupplierEntity findById(Integer id) {
+		Optional<SupplierEntity> obj = repo.findById(id);
+		SupplierEntity entity = obj.orElseThrow(() -> new ObjectNotFoundException("Object not foun: " + id));
+		return entity;
+	}
+	
+	public List<SupplierDTO> findByActive(boolean b) {
+		return repo.findByActive(true).stream().map(SupplierEntityConverter::toDTO).collect(Collectors.toList());
 	}
 	
 	public void createSupplier(SupplierDTO supplier) {
 		repo.save(converter.toEntity(supplier));
 	}
 	
-	public void updateSupplier(SupplierDTO suppliers, Integer cnpj) {
-		if (cnpj == null || suppliers == null || !cnpj.equals(suppliers.getName())) {
-			throw new SupplierException("Invalid Supplier CNPJ.");
+	public void updateSupplier(SupplierDTO suppliers, Integer id) {
+		if (id == null || suppliers == null || !id.equals(suppliers.getCnpj())) {
+			throw new SupplierException("Invalid Supplier ID.");
 		}
-		SupplierEntity existingObj = findById(cnpj);
+		SupplierEntity existingObj = findById(id);
+		updateData(existingObj, suppliers);
 		repo.save(existingObj);
 	}
 	
-	public void deleteSupplier(Integer cnpj) {
-		if (cnpj == null) {
-			throw new SupplierException("Supplier CNPJ can not be null.");
+	private void updateData(SupplierEntity existingObj, SupplierDTO newObj) {
+		existingObj.setName(newObj.getName());
+	}
+	
+	public void deleteSupplier(Integer id) {
+		if (id == null) {
+			throw new SupplierException("Supplier ID can not be null.");
 		}
-		SupplierEntity obj = findById(cnpj);
+		SupplierEntity obj = findById(id);
 		try {
 			repo.delete(obj);
 		} catch (DataIntegrityViolationException e) {
-			throw new SupplierException("Can not delete a Product with dependencies constraints.");
+			throw new SupplierException("Can not delete a Supplier with dependencies constraints.");
 		}
 	}
 	

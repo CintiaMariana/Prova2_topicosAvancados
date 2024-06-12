@@ -15,10 +15,12 @@ import lombok.ToString;
 @ToString
 
 public class SupplierDTO {
-	private Integer cnpj;
+	private Integer id;
+	private long cnpj;
 	private String name;
 	private Date lastBuyDate;
 	private float qualityRate;
 	private float probabilityNewDeals;
+	private boolean active;
 
 }
