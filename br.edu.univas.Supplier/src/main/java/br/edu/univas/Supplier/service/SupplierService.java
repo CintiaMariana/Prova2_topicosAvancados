@@ -48,7 +48,7 @@ public class SupplierService {
 	}
 	
 	public void updateSupplier(SupplierDTO suppliers, Integer id) {
-		if (id == null || suppliers == null || !id.equals(suppliers.getCnpj())) {
+		if (id == null || suppliers == null || !id.equals(suppliers.getId())) {
 			throw new SupplierException("Invalid Supplier ID.");
 		}
 		SupplierEntity existingObj = findById(id);
